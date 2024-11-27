@@ -22,10 +22,12 @@ public class WeaponAttributesHelper {
         var off_hand_pose = b.offHandPose() != null ? b.offHandPose() : a.offHandPose();
         var isTwoHanded = b.two_handed() != null ? b.two_handed() : a.two_handed();
         var category = b.category() != null ? b.category() : a.category();
+
+        // Override attacks
         var attacks = a.attacks();
         if (b.attacks() != null && b.attacks().length > 0) {
             var overrideAttacks = new ArrayList<WeaponAttributes.Attack>();
-            for(int i = 0; i < b.attacks().length; ++i) {
+            for (int i = 0; i < b.attacks().length; ++i) {
                 var base = (a.attacks() != null && a.attacks().length > i)
                         ? a.attacks()[i]
                         : new WeaponAttributes.Attack(null, null, 0, 0, 0, null, null, null);
@@ -38,13 +40,39 @@ public class WeaponAttributesHelper {
                         override.upswing() != 0 ? override.upswing() : base.upswing(),
                         override.animation() != null ? override.animation() : base.animation(),
                         override.swingSound() != null ? override.swingSound() : base.swingSound(),
-                        override.impactSound() != null ? override.impactSound() : base.impactSound());
+                        override.impactSound() != null ? override.impactSound() : base.impactSound()
+                );
                 overrideAttacks.add(attack);
             }
             attacks = overrideAttacks.toArray(new WeaponAttributes.Attack[0]);
         }
-        return new WeaponAttributes(attackRange, pose, off_hand_pose, isTwoHanded, category, attacks);
+
+        var attacksStrong = a.attacksStrong();
+        if (b.attacksStrong() != null && b.attacksStrong().length > 0) {
+            var overrideAttacksStrong = new ArrayList<WeaponAttributes.Attack>();
+            for (int i = 0; i < b.attacksStrong().length; ++i) {
+                var base = (a.attacksStrong() != null && a.attacksStrong().length > i)
+                        ? a.attacksStrong()[i]
+                        : new WeaponAttributes.Attack(null, null, 0, 0, 0, null, null, null);
+                var override = b.attacksStrong()[i];
+                var attack = new WeaponAttributes.Attack(
+                        override.conditions() != null ? override.conditions() : base.conditions(),
+                        override.hitbox() != null ? override.hitbox() : base.hitbox(),
+                        override.damageMultiplier() != 0 ? override.damageMultiplier() : base.damageMultiplier(),
+                        override.angle() != 0 ? override.angle() : base.angle(),
+                        override.upswing() != 0 ? override.upswing() : base.upswing(),
+                        override.animation() != null ? override.animation() : base.animation(),
+                        override.swingSound() != null ? override.swingSound() : base.swingSound(),
+                        override.impactSound() != null ? override.impactSound() : base.impactSound()
+                );
+                overrideAttacksStrong.add(attack);
+            }
+            attacksStrong = overrideAttacksStrong.toArray(new WeaponAttributes.Attack[0]);
+        }
+
+        return new WeaponAttributes(attackRange, pose, off_hand_pose, isTwoHanded, category, attacks, attacksStrong);
     }
+
 
     public static void validate(WeaponAttributes attributes) throws Exception {
         if (attributes.attacks() == null) {

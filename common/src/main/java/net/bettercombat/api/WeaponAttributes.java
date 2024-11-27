@@ -75,19 +75,23 @@ public final class WeaponAttributes {
      */
     private final Attack[] attacks;
 
+    private final Attack[] attacksStrong;
+
     public WeaponAttributes(
             double attack_range,
             @Nullable String pose,
             @Nullable String off_hand_pose,
             Boolean isTwoHanded,
             String category,
-            Attack[] attacks) {
+            Attack[] attacks,
+            Attack[] attacksStrong) {
         this.attack_range = attack_range;
         this.pose = pose;
         this.off_hand_pose = off_hand_pose;
         this.two_handed = isTwoHanded;
         this.category = category;
         this.attacks = attacks;
+        this.attacksStrong = attacksStrong;
     }
 
     /**
@@ -425,6 +429,11 @@ public final class WeaponAttributes {
     public Attack[] attacks() {
         return attacks;
     }
+
+    public Attack[] attacksStrong() {
+        return attacksStrong;
+    }
+
 
     @Override
     public boolean equals(Object obj) {

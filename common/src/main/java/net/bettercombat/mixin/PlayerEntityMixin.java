@@ -5,10 +5,13 @@ import com.google.common.collect.Multimap;
 import net.bettercombat.BetterCombat;
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.api.EntityPlayer_BetterCombat;
+import net.bettercombat.client.BetterCombatClient;
 import net.bettercombat.client.animation.PlayerAttackAnimatable;
 import net.bettercombat.logic.PlayerAttackHelper;
 import net.bettercombat.logic.PlayerAttackProperties;
 import net.bettercombat.logic.WeaponRegistry;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -18,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -28,7 +32,10 @@ import static net.minecraft.entity.EquipmentSlot.OFFHAND;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin implements PlayerAttackProperties, EntityPlayer_BetterCombat {
+    @Shadow public abstract void attack(Entity target);
+
     private int comboCount = 0;
+    private int strongAttackCooldown = 0;
     public int getComboCount() {
         return comboCount;
     }
@@ -43,6 +50,7 @@ public abstract class PlayerEntityMixin implements PlayerAttackProperties, Entit
             ((PlayerAttackAnimatable) this).updateAnimationsOnTick();
         }
         updateDualWieldingSpeedBoost();
+        updateStrongAttackSpeedBoost();
     }
 
     // FEATURE: Disable sweeping for attributed weapons
@@ -113,7 +121,75 @@ public abstract class PlayerEntityMixin implements PlayerAttackProperties, Entit
     // FEATURE: Dual wielding
 
     private Multimap<EntityAttribute, EntityAttributeModifier> dualWieldingAttributeMap;
+    private Multimap<EntityAttribute, EntityAttributeModifier> strongAttackAttributeMap;
+
     private static UUID dualWieldingSpeedModifierId = UUID.fromString("6b364332-0dc4-11ed-861d-0242ac120002");
+    private static UUID strongAttackSpeedModifierId = UUID.fromString("6b364332-0dc4-11ed-861d-0242ac120003");
+
+
+    /*private void updateStrongAttackSpeedBoost() {
+        var player = ((PlayerEntity) ((Object)this));
+        boolean isStrongAttackPressed = MinecraftClient.getInstance().options.useKey.isPressed();
+        if(isStrongAttackPressed && player.getAttackCooldownProgress(0.0f) < 1.0f) {
+            // Just started dual wielding
+            // Adding speed boost modifier
+            this.strongAttackAttributeMap = HashMultimap.create();
+            double multiplier = BetterCombat.config.strong_attack_speed_multiplier - 1;
+            strongAttackAttributeMap.put(
+                    EntityAttributes.GENERIC_ATTACK_SPEED,
+                    new EntityAttributeModifier(
+                            strongAttackSpeedModifierId,
+                            "Strong attack speed boost",
+                            multiplier,
+                            EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            player.getAttributes().addTemporaryModifiers(strongAttackAttributeMap);
+        } else {
+            // Just stopped dual wielding
+            // Removing speed boost modifier
+            if (strongAttackAttributeMap != null) { // Safety first... Who knows...
+                player.getAttributes().removeModifiers(strongAttackAttributeMap);
+                strongAttackAttributeMap = null;
+            }
+        }
+    }*/
+
+    private void updateStrongAttackSpeedBoost() {
+        var player = ((PlayerEntity) ((Object) this));
+        boolean isStrongAttackPressed = MinecraftClient.getInstance().options.useKey.isPressed();
+
+        // Decrement custom cooldown for strong attack
+        if (strongAttackCooldown > 0) {
+            strongAttackCooldown--;
+        }
+
+        boolean isCooldownActive = strongAttackCooldown > 0;
+
+        if (isStrongAttackPressed && !isCooldownActive && MinecraftClient.getInstance().options.attackKey.isPressed() && player.getAttackCooldownProgress(0.0f) == 1.0f) {
+            // Apply the speed modifier only when strong attack is pressed, and no cooldown is active
+            if (strongAttackAttributeMap == null) {
+                this.strongAttackAttributeMap = HashMultimap.create();
+                double multiplier = BetterCombat.config.strong_attack_speed_multiplier - 1;
+                strongAttackAttributeMap.put(
+                        EntityAttributes.GENERIC_ATTACK_SPEED,
+                        new EntityAttributeModifier(
+                                strongAttackSpeedModifierId,
+                                "Strong attack speed boost",
+                                multiplier,
+                                EntityAttributeModifier.Operation.MULTIPLY_BASE));
+                player.getAttributes().addTemporaryModifiers(strongAttackAttributeMap);
+                double attackSpeed = player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
+                    strongAttackCooldown = (int) Math.floor(20.0 / attackSpeed);
+            }
+        } else if (!isCooldownActive) {
+            if (strongAttackAttributeMap != null) {
+                player.getAttributes().removeModifiers(strongAttackAttributeMap);
+                strongAttackAttributeMap = null;
+            }
+        }
+    }
+
+
+
 
     private void updateDualWieldingSpeedBoost() {
         var player = ((PlayerEntity) ((Object)this));

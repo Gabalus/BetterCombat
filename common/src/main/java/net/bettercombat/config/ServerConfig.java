@@ -70,6 +70,8 @@ public class ServerConfig implements ConfigData {
     @Comment("Total multiplier, (examples: +30% = 1.3, -30% = 0.7)")
     public float dual_wielding_attack_speed_multiplier = 1.2F;
     @Comment("Total multiplier, (examples: +30% = 1.3, -30% = 0.7)")
+    public float strong_attack_speed_multiplier = 0.4F;
+    @Comment("Total multiplier, (examples: +30% = 1.3, -30% = 0.7)")
     public float dual_wielding_main_hand_damage_multiplier = 1F;
     @Comment("Total multiplier, (examples: +30% = 1.3, -30% = 0.7)")
     public float dual_wielding_off_hand_damage_multiplier = 1F;

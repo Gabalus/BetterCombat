@@ -34,6 +34,19 @@
           "pitch": 1.2
         }
       }
+    ],
+    "attacksStrong": [
+      {
+        "hitbox": "FORWARD_BOX",
+        "damage_multiplier": 2,
+        "angle": 0,
+        "upswing": 0.1,
+        "animation": "bettercombat:one_handed_stab",
+        "swing_sound": {
+          "id": "bettercombat:sword_slash",
+          "pitch": 1.2
+        }
+      }
     ]
   }
 }
