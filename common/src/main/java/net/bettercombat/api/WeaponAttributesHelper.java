@@ -30,12 +30,13 @@ public class WeaponAttributesHelper {
             for (int i = 0; i < b.attacks().length; ++i) {
                 var base = (a.attacks() != null && a.attacks().length > i)
                         ? a.attacks()[i]
-                        : new WeaponAttributes.Attack(null, null, 0, 0, 0, null, null, null);
+                        : new WeaponAttributes.Attack(null, null, 0, 0, 0, 0, null, null, null);
                 var override = b.attacks()[i];
                 var attack = new WeaponAttributes.Attack(
                         override.conditions() != null ? override.conditions() : base.conditions(),
                         override.hitbox() != null ? override.hitbox() : base.hitbox(),
                         override.damageMultiplier() != 0 ? override.damageMultiplier() : base.damageMultiplier(),
+                        override.attackSpeedMultiplier() != 0 ? override.attackSpeedMultiplier() : base.attackSpeedMultiplier(),
                         override.angle() != 0 ? override.angle() : base.angle(),
                         override.upswing() != 0 ? override.upswing() : base.upswing(),
                         override.animation() != null ? override.animation() : base.animation(),
@@ -53,12 +54,13 @@ public class WeaponAttributesHelper {
             for (int i = 0; i < b.attacksStrong().length; ++i) {
                 var base = (a.attacksStrong() != null && a.attacksStrong().length > i)
                         ? a.attacksStrong()[i]
-                        : new WeaponAttributes.Attack(null, null, 0, 0, 0, null, null, null);
+                        : new WeaponAttributes.Attack(null, null, 0, 0, 0, 0, null, null, null);
                 var override = b.attacksStrong()[i];
                 var attack = new WeaponAttributes.Attack(
                         override.conditions() != null ? override.conditions() : base.conditions(),
                         override.hitbox() != null ? override.hitbox() : base.hitbox(),
                         override.damageMultiplier() != 0 ? override.damageMultiplier() : base.damageMultiplier(),
+                        override.attackSpeedMultiplier() != 0 ? override.attackSpeedMultiplier() : base.attackSpeedMultiplier(),
                         override.angle() != 0 ? override.angle() : base.angle(),
                         override.upswing() != 0 ? override.upswing() : base.upswing(),
                         override.animation() != null ? override.animation() : base.animation(),

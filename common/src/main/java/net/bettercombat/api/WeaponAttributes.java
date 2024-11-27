@@ -167,6 +167,8 @@ public final class WeaponAttributes {
          */
         private Sound impact_sound = null;
 
+        private double attack_speed_mulitplier = 0;
+
         /**
          * This empty initializer is needed for GSON, to support parsing over default values
          */
@@ -176,6 +178,7 @@ public final class WeaponAttributes {
                 Condition[] conditions,
                 HitBoxShape hitbox,
                 double damage_multiplier,
+                double attack_speed_mulitplier,
                 double angle,
                 double upswing,
                 String animation,
@@ -185,6 +188,7 @@ public final class WeaponAttributes {
             this.conditions = conditions;
             this.hitbox = hitbox;
             this.damage_multiplier = damage_multiplier;
+            this.attack_speed_mulitplier = attack_speed_mulitplier;
             this.angle = angle;
             this.upswing = upswing;
             this.animation = animation;
@@ -219,6 +223,10 @@ public final class WeaponAttributes {
 
         public Sound swingSound() {
             return swing_sound;
+        }
+
+        public double attackSpeedMultiplier() {
+            return attack_speed_mulitplier;
         }
 
         public Sound impactSound() {

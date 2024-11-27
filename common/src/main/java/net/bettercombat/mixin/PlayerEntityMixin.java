@@ -35,7 +35,6 @@ public abstract class PlayerEntityMixin implements PlayerAttackProperties, Entit
     @Shadow public abstract void attack(Entity target);
 
     private int comboCount = 0;
-    private int strongAttackCooldown = 0;
     public int getComboCount() {
         return comboCount;
     }
@@ -126,49 +125,34 @@ public abstract class PlayerEntityMixin implements PlayerAttackProperties, Entit
     private static UUID dualWieldingSpeedModifierId = UUID.fromString("6b364332-0dc4-11ed-861d-0242ac120002");
     private static UUID strongAttackSpeedModifierId = UUID.fromString("6b364332-0dc4-11ed-861d-0242ac120003");
 
+    private AttackHand previousAttack = null;
+
 
     private void updateStrongAttackSpeedBoost() {
-        var player = ((PlayerEntity) ((Object)this));
-        boolean isStrongAttackPressed = BetterCombatClient.config.isStrongAttacks;
-        if(isStrongAttackPressed) {
-            // Just started dual wielding
-            // Adding speed boost modifier
-            this.strongAttackAttributeMap = HashMultimap.create();
-            double multiplier = BetterCombat.config.strong_attack_speed_multiplier - 1;
-            strongAttackAttributeMap.put(
-                    EntityAttributes.GENERIC_ATTACK_SPEED,
-                    new EntityAttributeModifier(
-                            strongAttackSpeedModifierId,
-                            "Strong attack speed boost",
-                            multiplier,
-                            EntityAttributeModifier.Operation.MULTIPLY_BASE));
-            player.getAttributes().addTemporaryModifiers(strongAttackAttributeMap);
-        } else {
-            // Just stopped dual wielding
-            // Removing speed boost modifier
-            if (strongAttackAttributeMap != null) { // Safety first... Who knows...
+        var player = ((PlayerEntity) ((Object) this));
+        var currentAttack = PlayerAttackHelper
+                .getCurrentAttack(player, comboCount);
+
+
+        if (previousAttack == null || !previousAttack.equals(currentAttack)) {
+
+            if (strongAttackAttributeMap != null) {
                 player.getAttributes().removeModifiers(strongAttackAttributeMap);
                 strongAttackAttributeMap = null;
             }
-        }
-    }
-/*
-    private void updateStrongAttackSpeedBoost() {
-        var player = ((PlayerEntity) ((Object) this));
-        boolean isStrongAttackPressed = MinecraftClient.getInstance().options.useKey.isPressed();
-
-        // Decrement custom cooldown for strong attack
-        if (strongAttackCooldown > 0) {
-            strongAttackCooldown--;
+            previousAttack = currentAttack;
         }
 
-        boolean isCooldownActive = strongAttackCooldown > 0;
+        var comboCount = ((PlayerAttackProperties) player).getComboCount();
 
-        if (isStrongAttackPressed && !isCooldownActive && MinecraftClient.getInstance().options.attackKey.isPressed() && player.getAttackCooldownProgress(0.0f) == 1.0f) {
-            // Apply the speed modifier only when strong attack is pressed, and no cooldown is active
+        if (PlayerAttackHelper.getCurrentAttack(player, comboCount) != null) {
             if (strongAttackAttributeMap == null) {
+                var attackSpeedMultiplier = PlayerAttackHelper
+                        .getCurrentAttack(player, comboCount)
+                        .attack()
+                        .attackSpeedMultiplier();
                 this.strongAttackAttributeMap = HashMultimap.create();
-                double multiplier = BetterCombat.config.strong_attack_speed_multiplier - 1;
+                double multiplier = attackSpeedMultiplier - 1;
                 strongAttackAttributeMap.put(
                         EntityAttributes.GENERIC_ATTACK_SPEED,
                         new EntityAttributeModifier(
@@ -177,17 +161,9 @@ public abstract class PlayerEntityMixin implements PlayerAttackProperties, Entit
                                 multiplier,
                                 EntityAttributeModifier.Operation.MULTIPLY_BASE));
                 player.getAttributes().addTemporaryModifiers(strongAttackAttributeMap);
-                double attackSpeed = player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
-                    strongAttackCooldown = (int) Math.floor(20.0 / attackSpeed);
-            }
-        } else if (!isCooldownActive) {
-            if (strongAttackAttributeMap != null) {
-                player.getAttributes().removeModifiers(strongAttackAttributeMap);
-                strongAttackAttributeMap = null;
             }
         }
-    }*/
-
+    }
 
 
 
