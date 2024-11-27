@@ -366,6 +366,13 @@ public abstract class MinecraftClientInject implements MinecraftClient_BetterCom
                     "hud.bettercombat.mine_with_weapons_on" : "hud.bettercombat.mine_with_weapons_off");
             textFade = 40;
         }
+        if (BetterCombatKeybindings.toggleStrongAttackKeyBinding.wasPressed() && player.getAttackCooldownProgress(0.0f) == 1.0f) {
+            BetterCombatClient.config.isStrongAttacks = !BetterCombatClient.config.isStrongAttacks;
+            AutoConfig.getConfigHolder(ClientConfigWrapper.class).save();
+            textToRender = I18n.translate(BetterCombatClient.config.isStrongAttacks ?
+                    "hud.bettercombat.strong_attacks_on" : "hud.bettercombat.strong_attacks_off");
+            textFade = 40;
+        }
         if (textFade > 0) {
             textFade -= 1;
         }

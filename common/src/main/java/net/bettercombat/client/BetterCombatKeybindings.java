@@ -8,6 +8,7 @@ import java.util.List;
 public class BetterCombatKeybindings {
     public static KeyBinding feintKeyBinding;
     public static KeyBinding toggleMineKeyBinding;
+    public static KeyBinding toggleStrongAttackKeyBinding;
     public static List<KeyBinding> all;
 
     static {
@@ -23,6 +24,12 @@ public class BetterCombatKeybindings {
                 InputUtil.UNKNOWN_KEY.getCode(),
                 "Better Combat");
 
-        all = List.of(feintKeyBinding, toggleMineKeyBinding);
+        toggleStrongAttackKeyBinding = new KeyBinding(
+                "keybinds.bettercombat.toggle_strong_attack",
+                InputUtil.Type.KEYSYM,
+                InputUtil.UNKNOWN_KEY.getCode(),
+                "Better Combat");
+
+        all = List.of(feintKeyBinding, toggleMineKeyBinding, toggleStrongAttackKeyBinding);
     }
 }

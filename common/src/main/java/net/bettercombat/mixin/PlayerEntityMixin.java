@@ -127,10 +127,10 @@ public abstract class PlayerEntityMixin implements PlayerAttackProperties, Entit
     private static UUID strongAttackSpeedModifierId = UUID.fromString("6b364332-0dc4-11ed-861d-0242ac120003");
 
 
-    /*private void updateStrongAttackSpeedBoost() {
+    private void updateStrongAttackSpeedBoost() {
         var player = ((PlayerEntity) ((Object)this));
-        boolean isStrongAttackPressed = MinecraftClient.getInstance().options.useKey.isPressed();
-        if(isStrongAttackPressed && player.getAttackCooldownProgress(0.0f) < 1.0f) {
+        boolean isStrongAttackPressed = BetterCombatClient.config.isStrongAttacks;
+        if(isStrongAttackPressed) {
             // Just started dual wielding
             // Adding speed boost modifier
             this.strongAttackAttributeMap = HashMultimap.create();
@@ -151,8 +151,8 @@ public abstract class PlayerEntityMixin implements PlayerAttackProperties, Entit
                 strongAttackAttributeMap = null;
             }
         }
-    }*/
-
+    }
+/*
     private void updateStrongAttackSpeedBoost() {
         var player = ((PlayerEntity) ((Object) this));
         boolean isStrongAttackPressed = MinecraftClient.getInstance().options.useKey.isPressed();
@@ -186,7 +186,7 @@ public abstract class PlayerEntityMixin implements PlayerAttackProperties, Entit
                 strongAttackAttributeMap = null;
             }
         }
-    }
+    }*/
 
 
 

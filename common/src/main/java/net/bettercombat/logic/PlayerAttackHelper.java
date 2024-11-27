@@ -4,6 +4,7 @@ import net.bettercombat.BetterCombat;
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.api.ComboState;
 import net.bettercombat.api.WeaponAttributes;
+import net.bettercombat.client.BetterCombatClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
@@ -47,23 +48,23 @@ public class PlayerAttackHelper {
 
     public static AttackHand getCurrentAttack(PlayerEntity player, int comboCount) {
         if (isDualWielding(player)) {
-            boolean isOffHand = shouldAttackWithOffHand(player,comboCount);
-            var itemStack = isOffHand
-                    ? player.getOffHandStack()
-                    : player.getMainHandStack();
-            var attributes = WeaponRegistry.getAttributes(itemStack);
-            if (attributes != null && attributes.attacks() != null) {
-                int handSpecificComboCount = ((isOffHand && comboCount > 0) ? (comboCount - 1) : (comboCount)) / 2;
-                var attackSelection = selectAttack(handSpecificComboCount, attributes, player, isOffHand);
-                var attack = attackSelection.attack;
-                var combo = attackSelection.comboState;
-                return new AttackHand(attack, combo, isOffHand, attributes, itemStack);
-            }
+                boolean isOffHand = shouldAttackWithOffHand(player, comboCount);
+                var itemStack = isOffHand
+                        ? player.getOffHandStack()
+                        : player.getMainHandStack();
+                var attributes = WeaponRegistry.getAttributes(itemStack);
+                if (attributes != null && attributes.attacks() != null) {
+                    int handSpecificComboCount = ((isOffHand && comboCount > 0) ? (comboCount - 1) : (comboCount)) / 2;
+                    var attackSelection = selectAttack(handSpecificComboCount, attributes, player, isOffHand, BetterCombatClient.config.isStrongAttacks);
+                    var attack = attackSelection.attack;
+                    var combo = attackSelection.comboState;
+                    return new AttackHand(attack, combo, isOffHand, attributes, itemStack);
+                }
         } else {
             var itemStack = player.getMainHandStack();
             WeaponAttributes attributes = WeaponRegistry.getAttributes(itemStack);
             if (attributes != null && attributes.attacks() != null) {
-                var attackSelection = selectAttack(comboCount, attributes, player, false);
+                var attackSelection = selectAttack(comboCount, attributes, player, false, BetterCombatClient.config.isStrongAttacks);
                 var attack = attackSelection.attack;
                 var combo = attackSelection.comboState;
                 return new AttackHand(attack, combo, false, attributes, itemStack);
@@ -74,8 +75,8 @@ public class PlayerAttackHelper {
 
     private record AttackSelection(WeaponAttributes.Attack attack, ComboState comboState) { }
 
-    private static AttackSelection selectAttack(int comboCount, WeaponAttributes attributes, PlayerEntity player, boolean isOffHandAttack) {
-        var attacks = attributes.attacks();
+    private static AttackSelection selectAttack(int comboCount, WeaponAttributes attributes, PlayerEntity player, boolean isOffHandAttack, boolean isStrongAttack) {
+        var attacks = (isStrongAttack && attributes.attacksStrong()!=null) ? attributes.attacksStrong() : attributes.attacks();
         attacks = Arrays.stream(attacks)
                 .filter(attack ->
                         attack.conditions() == null
