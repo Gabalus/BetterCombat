@@ -12,7 +12,7 @@
         "swing_sound": {
           "id": "bettercombat:sword_slash"
         },
-        "attack_speed_mulitplier": 1.5
+        "attack_speed_multiplier": 1.5
       },
       {
         "hitbox": "HORIZONTAL_PLANE",
@@ -23,7 +23,7 @@
         "swing_sound": {
           "id": "bettercombat:sword_slash"
         },
-        "attack_speed_mulitplier": 0.5
+        "attack_speed_multiplier": 0.5
       },
       {
         "hitbox": "FORWARD_BOX",
@@ -35,20 +35,43 @@
           "id": "bettercombat:sword_slash",
           "pitch": 1.2
         },
-        "attack_speed_mulitplier": 2
+        "attack_speed_multiplier": 2
       }
     ],
     "attacksStrong": [
       {
+        "hitbox": "HORIZONTAL_PLANE",
+        "damage_multiplier": 1,
+        "angle": 120,
+        "upswing": 0.5,
+        "animation": "bettercombat:one_handed_slash_horizontal_right",
+        "swing_sound": {
+          "id": "bettercombat:sword_slash"
+        },
+        "attack_speed_multiplier": 1.5
+      },
+      {
+        "hitbox": "HORIZONTAL_PLANE",
+        "damage_multiplier": 1,
+        "angle": 120,
+        "upswing": 0.5,
+        "animation": "bettercombat:one_handed_slash_horizontal_left",
+        "swing_sound": {
+          "id": "bettercombat:sword_slash"
+        },
+        "attack_speed_multiplier": 0.5
+      },
+      {
         "hitbox": "FORWARD_BOX",
-        "damage_multiplier": 2,
+        "damage_multiplier": 1,
         "angle": 0,
-        "upswing": 0.1,
+        "upswing": 0.5,
         "animation": "bettercombat:one_handed_stab",
         "swing_sound": {
           "id": "bettercombat:sword_slash",
           "pitch": 1.2
-        }
+        },
+        "attack_speed_multiplier": 2
       }
     ]
   }
